@@ -1,0 +1,18 @@
+[package]
+name = "myip"
+version = "0.1.0"
+edition = "2021"
+
+[profile.release]
+opt-level = "z"
+debug = "none"
+strip = "symbols"
+lto = "fat"
+panic = "abort"
+codegen-units = 1
+
+[dependencies]
+reqwest = "0.12"
+thiserror = "1"
+clap = { version = "4", features = ["derive"] }
+tokio = { version = "1", features = ["macros"] }
