@@ -23,35 +23,22 @@ async fn main() {
     let mut cli = Cli::parse();
     cli.timeout = cli.timeout.max(1);
 
-    match cli.command {
-        None => {
-            let client = reqwest::Client::new();
-            let ip = fetch_public_ip(&client, Duration::from_secs(cli.timeout))
-                .await
-                .unwrap();
-            println!("{}", ip);
-        }
-        Some(Ip::V4) => {
-            let client = reqwest::Client::builder()
-                .local_address(Some(std::net::Ipv4Addr::new(0, 0, 0, 0).into()))
-                .build()
-                .unwrap();
-            let ip = fetch_public_ip(&client, Duration::from_secs(cli.timeout))
-                .await
-                .unwrap();
-            println!("{}", ip);
-        }
-        Some(Ip::V6) => {
-            let client = reqwest::Client::builder()
-                .local_address(Some(std::net::Ipv6Addr::new(0, 0, 0, 0, 0, 0, 0, 0).into()))
-                .build()
-                .unwrap();
-            let ip = fetch_public_ip(&client, Duration::from_secs(cli.timeout))
-                .await
-                .unwrap();
-            println!("{}", ip);
-        }
-    }
+    let client = match cli.command {
+        None => reqwest::Client::new(),
+        Some(Ip::V4) => reqwest::Client::builder()
+            .local_address(Some(std::net::Ipv4Addr::new(0, 0, 0, 0).into()))
+            .build()
+            .unwrap(),
+        Some(Ip::V6) => reqwest::Client::builder()
+            .local_address(Some(std::net::Ipv6Addr::new(0, 0, 0, 0, 0, 0, 0, 0).into()))
+            .build()
+            .unwrap(),
+    };
+
+    let ip = fetch_public_ip(&client, Duration::from_secs(cli.timeout))
+        .await
+        .unwrap();
+    println!("{}", ip);
 }
 
 const CLOUDFLARE_TRACE: &str = "https://cloudflare.com/cdn-cgi/trace";
