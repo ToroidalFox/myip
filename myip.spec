@@ -1,5 +1,5 @@
 Name: myip
-Version: 0.1.0
+Version: 0.1.1
 Release: 1
 License: MIT
 Summary: Prints public ip
